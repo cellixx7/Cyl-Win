@@ -2,13 +2,15 @@
 
 Meu Windows 10, refatorado: leve, bonito e do meu jeito.
 
-O Cyl Win não é uma ISO nova. É um conjunto de **scripts, configurações e ferramentas** aplicados por cima do Windows 10 que já está instalado, em fases, sempre com backup antes. Tudo que está aqui é versionado, então dá para refazer o setup em outro PC ou depois de uma formatação.
+O Cyl Win não é uma ISO nova. É **um app próprio** (a interface: barras, modal do PC, volume, IA) mais **scripts PowerShell** (limpeza e ajustes do sistema), aplicados por cima do Windows 10 que já está instalado, sempre com backup antes. Tudo feito do zero com o Claude Code, sem depender de apps de terceiros. Tudo que está aqui é versionado, então dá para refazer o setup em outro PC ou depois de uma formatação.
 
 ## Estrutura
 
 | Pasta | O que tem |
 |---|---|
 | `docs/ROADMAP.md` | Visão, fases, ferramentas e riscos |
+| `src/CylWin/` | O app Cyl Win (C# .NET 8 + WPF). Veja o README dele para rodar |
+| `docs/design/` | Mockups da interface |
 | `scripts/` | Scripts PowerShell numerados por fase |
 | `configs/` | Exportações de configurações (Windhawk, Rainmeter, PowerToys, etc.) *(a criar)* |
 

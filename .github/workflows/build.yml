@@ -1,0 +1,23 @@
+name: Build Cyl Win
+
+on:
+  push:
+    paths: ["src/**", ".github/workflows/build.yml"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Compilar
+        run: dotnet publish src/CylWin/CylWin.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
+      - name: Guardar o CylWin.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: CylWin
+          path: publish/
