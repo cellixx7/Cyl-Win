@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Management;
 using System.Net.NetworkInformation;
+using System.Security.Principal;
+using LibreHardwareMonitor.Hardware;
 using Microsoft.Win32;
 
 namespace CylWin;
@@ -17,6 +19,13 @@ public sealed class SystemStats : IDisposable
     private long _lastRx, _lastTx;
     private DateTime _lastNet = DateTime.MinValue;
     private bool _tempUnavailable;
+    private bool _lhmTried;
+    private Computer? _lhm;
+    private IHardware? _cpuHw;
+    private ISensor? _tempSensor;
+
+    /// <summary>Por que a temperatura não aparece (vazio quando aparece).</summary>
+    public string TempHint { get; private set; } = "";
 
     public string CpuName { get; }
     public string GpuName { get; }
@@ -94,11 +103,25 @@ public sealed class SystemStats : IDisposable
     }
 
     /// <summary>
-    /// Temperatura pela zona térmica ACPI. Em muitos Ryzen o Windows não expõe isso
-    /// sem um driver; nesse caso devolve null e o Cyl Win mostra "—".
+    /// Temperatura da CPU. No Ryzen ela vem do sensor Tctl/Tdie, lido pela biblioteca
+    /// LibreHardwareMonitor através do driver PawnIO (precisa estar instalado e o
+    /// Cyl Win rodando como administrador). Sem isso, tenta a zona térmica ACPI
+    /// do Windows e, se nada funcionar, devolve null e o modal mostra "—".
     /// </summary>
     public double? Temperature()
     {
+        if (!_lhmTried) InitLhm();
+
+        if (_cpuHw is not null && _tempSensor is not null)
+        {
+            try
+            {
+                _cpuHw.Update();
+                if (_tempSensor.Value is float v && v > 0 && v < 120) return v;
+            }
+            catch { }
+        }
+
         if (_tempUnavailable) return null;
         try
         {
@@ -116,13 +139,68 @@ public sealed class SystemStats : IDisposable
         return null;
     }
 
-    public static TimeSpan Uptime() => TimeSpan.FromMilliseconds(Environment.TickCount64);
-
-    public static double DiskFreeGb(string drive = "C")
+    private void InitLhm()
     {
-        try { return new DriveInfo(drive).AvailableFreeSpace / 1_073_741_824d; }
-        catch { return 0; }
+        _lhmTried = true;
+
+        if (!IsAdmin())
+        {
+            TempHint = "abra como admin";
+            return;
+        }
+        if (!IsPawnIoInstalled())
+        {
+            TempHint = "instale o PawnIO";
+            return;
+        }
+
+        try
+        {
+            _lhm = new Computer { IsCpuEnabled = true };
+            _lhm.Open();
+            _cpuHw = _lhm.Hardware.FirstOrDefault(h => h.HardwareType == HardwareType.Cpu);
+            _cpuHw?.Update();
+            _tempSensor = _cpuHw?.Sensors
+                .Where(s => s.SensorType == SensorType.Temperature)
+                .OrderByDescending(s => s.Name.Contains("Tctl") || s.Name.Contains("Tdie"))
+                .ThenByDescending(s => s.Name.Contains("Package"))
+                .FirstOrDefault();
+            TempHint = _tempSensor is null ? "sensor não encontrado" : "";
+        }
+        catch
+        {
+            TempHint = "erro ao ler o sensor";
+        }
     }
+
+    public static bool IsAdmin()
+    {
+        using var id = WindowsIdentity.GetCurrent();
+        return new WindowsPrincipal(id).IsInRole(WindowsBuiltInRole.Administrator);
+    }
+
+    private static bool IsPawnIoInstalled() =>
+        Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\PawnIO") is not null;
+
+    /// <summary>Espaço do disco: (livre, total) em GB, ou null se o disco não existir.</summary>
+    public static (double free, double total)? Disk(string letter)
+    {
+        try
+        {
+            var d = new DriveInfo(letter);
+            if (!d.IsReady) return null;
+            return (d.AvailableFreeSpace / 1_073_741_824d, d.TotalSize / 1_073_741_824d);
+        }
+        catch { return null; }
+    }
+
+    public static string DiskLabel(string letter)
+    {
+        try { var l = new DriveInfo(letter).VolumeLabel; return string.IsNullOrWhiteSpace(l) ? "Disco local" : l; }
+        catch { return "Disco"; }
+    }
+
+    public static TimeSpan Uptime() => TimeSpan.FromMilliseconds(Environment.TickCount64);
 
     public static bool IsWifi() =>
         NetworkInterface.GetAllNetworkInterfaces().Any(n =>
@@ -198,6 +276,7 @@ public sealed class SystemStats : IDisposable
     public void Dispose()
     {
         _cpu?.Dispose();
+        try { _lhm?.Close(); } catch { }
         foreach (var c in _gpu.Values) c.Dispose();
         _gpu.Clear();
     }

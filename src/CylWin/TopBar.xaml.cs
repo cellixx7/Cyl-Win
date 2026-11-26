@@ -30,7 +30,7 @@ public partial class TopBar : Window
     private DateTime _leftAt = DateTime.MaxValue;
     private DateTime _popupLeftAt = DateTime.MaxValue;
 
-    private (TextBlock value, ScaleTransform fill) _cpu, _temp, _gpu, _ram;
+    private (TextBlock value, ScaleTransform fill, TextBlock name) _cpu, _temp, _gpu, _ram, _diskC, _diskD;
 
     public TopBar()
     {
@@ -40,6 +40,8 @@ public partial class TopBar : Window
         _temp = BuildRow(RowTemp, "TEMP", "CPU", "Warm");
         _gpu = BuildRow(RowGpu, "GPU", _stats.GpuName, "Accent");
         _ram = BuildRow(RowRam, "RAM", $"{_stats.TotalRamGb:0} GB", "Accent");
+        _diskC = BuildRow(RowDiskC, "C:", SystemStats.DiskLabel("C"), "AccentSoft");
+        _diskD = BuildRow(RowDiskD, "D:", SystemStats.DiskLabel("D"), "AccentSoft");
 
         PcButton.MouseEnter += (_, _) => OpenPcPopup();
 
@@ -151,6 +153,7 @@ public partial class TopBar : Window
 
         double? t = _stats.Temperature();
         Set(_temp, t is null ? "—" : $"{t:0}°C", t is null ? 0 : Math.Clamp((t.Value - 30) / 60, 0, 1));
+        _temp.name.Text = t is null && _stats.TempHint.Length > 0 ? $"CPU · {_stats.TempHint}" : "CPU";
 
         double gpu = _stats.Gpu();
         Set(_gpu, $"{gpu:0}%", gpu / 100);
@@ -158,21 +161,29 @@ public partial class TopBar : Window
         var (used, total) = _stats.Ram();
         Set(_ram, $"{used.ToString("0.0", PtBr)} de {total:0} GB", total > 0 ? used / total : 0);
 
-        var (down, up) = _stats.Net();
-        NetText.Text = $"Rede  ↓ {down.ToString("0.0", PtBr)} MB/s   ↑ {up.ToString("0.0", PtBr)} MB/s";
+        SetDisk(_diskC, RowDiskC, "C");
+        SetDisk(_diskD, RowDiskD, "D");
 
         var upt = SystemStats.Uptime();
-        InfoText.Text = $"Ligado há {(int)upt.TotalHours} h {upt.Minutes} min · Disco C: {SystemStats.DiskFreeGb():0} GB livres";
+        InfoText.Text = $"Ligado há {(int)upt.TotalHours} h {upt.Minutes} min";
     }
 
-    private static void Set((TextBlock value, ScaleTransform fill) row, string text, double pct)
+    private static void SetDisk((TextBlock value, ScaleTransform fill, TextBlock name) row, Grid g, string letter)
+    {
+        var d = SystemStats.Disk(letter);
+        g.Visibility = d is null ? Visibility.Collapsed : Visibility.Visible;
+        if (d is not { } v) return;
+        Set(row, $"{v.free:0} GB livres", v.total > 0 ? 1 - v.free / v.total : 0);
+    }
+
+    private static void Set((TextBlock value, ScaleTransform fill, TextBlock name) row, string text, double pct)
     {
         row.value.Text = text;
         row.fill.ScaleX = Math.Clamp(pct, 0, 1);
     }
 
-    /// <summary>Monta uma linha: CHAVE  nome ........ valor, com a barrinha embaixo.</summary>
-    private (TextBlock, ScaleTransform) BuildRow(Grid g, string key, string name, string brushKey)
+    /// <summary>Monta uma linha: CHAVE  nome ........ valor, com a barrinha embaixo (para discos, o quanto está ocupado).</summary>
+    private (TextBlock, ScaleTransform, TextBlock) BuildRow(Grid g, string key, string name, string brushKey)
     {
         g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(46) });
         g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -207,7 +218,7 @@ public partial class TopBar : Window
         g.Children.Add(n);
         g.Children.Add(v);
         g.Children.Add(track);
-        return (v, scale);
+        return (v, scale, n);
     }
 
     // ---------------- cliques ----------------

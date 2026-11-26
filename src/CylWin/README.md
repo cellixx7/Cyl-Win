@@ -1,11 +1,13 @@
 # Cyl Win (o app)
 
+Versão atual: **0.2**
+
 O programa que desenha a interface do Cyl Win por cima do Windows 10. Feito do zero em C# (.NET 8 + WPF), sem depender de apps de terceiros.
 
 ## O que a versão 0.1 faz
 
 - **Barra de vidro no topo**, centralizada, que fica escondida e desce quando o mouse encosta na borda de cima.
-- **Botão "Cyl"**: passando o mouse abre o modal do PC com CPU, temperatura, GPU, RAM, rede, tempo ligado e espaço livre no C:. Clicando abre o Gerenciador de Tarefas.
+- **Botão "Cyl"**: passando o mouse abre o modal do PC com CPU, temperatura, GPU, RAM, discos C: e D: (espaço livre e barra de ocupação) e tempo ligado. Clicando abre o Gerenciador de Tarefas.
 - **Rede, volume, notificações e relógio** na direita. Por enquanto o volume abre o mixer do Windows e o sino abre a Central de Ações; as versões próprias vêm nas próximas etapas.
 - Botão direito na barra: **Fixar barra** (não esconder) e **Sair**.
 
@@ -13,7 +15,7 @@ Os números só são medidos enquanto o modal está aberto, para o app ficar lev
 
 ## Limitações conhecidas
 
-- **Temperatura**: o Windows só entrega a temperatura do Ryzen por um driver. Sem ele o modal mostra "—". Na próxima etapa entra a biblioteca do LibreHardwareMonitor (embutida no app).
+- **Temperatura**: o Windows só entrega a temperatura do Ryzen por um driver. O app usa a biblioteca do LibreHardwareMonitor (embutida) com o driver **PawnIO**, que é assinado e precisa ser instalado uma vez (`winget install namazso.PawnIO`). Além disso o Cyl Win precisa rodar **como administrador**. Se faltar algo, o modal mostra "—" e diz o motivo ao lado de "CPU".
 - Por enquanto só no monitor principal.
 
 ## Como rodar

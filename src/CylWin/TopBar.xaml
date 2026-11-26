@@ -63,8 +63,10 @@
         <Grid x:Name="RowGpu" Margin="0,8,0,0"/>
         <Grid x:Name="RowRam" Margin="0,8,0,0"/>
 
-        <TextBlock x:Name="NetText" Margin="0,14,0,0" Foreground="{StaticResource Ink}"/>
-        <TextBlock x:Name="InfoText" Margin="0,6,0,0" FontSize="12" Foreground="{StaticResource InkSoft}"/>
+        <Grid x:Name="RowDiskC" Margin="0,8,0,0"/>
+        <Grid x:Name="RowDiskD" Margin="0,8,0,0"/>
+
+        <TextBlock x:Name="InfoText" Margin="0,12,0,0" FontSize="12" Foreground="{StaticResource InkSoft}"/>
       </StackPanel>
     </Border>
   </Popup>
