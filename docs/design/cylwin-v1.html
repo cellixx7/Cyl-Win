@@ -26,7 +26,14 @@ p{margin:0}.mut{color:var(--mut)}
 .stage{position:relative;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
 .screen{position:absolute;left:0;top:0;width:1280px;height:760px;transform-origin:0 0;overflow:hidden;font:13px/1.4 Inter,sans-serif;color:#fff}
 .glass{background:rgba(12,34,48,.5);backdrop-filter:blur(16px) saturate(1.3);border:1px solid rgba(255,255,255,.16)}
-.bar{position:absolute;left:10px;right:10px;top:8px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 6px}
+.topw{position:absolute;left:260px;top:0;width:760px;height:300px;pointer-events:none;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.topw>*{pointer-events:auto}
+.topHid .topw{transform:translateY(-70px);opacity:0}
+.topedge{position:absolute;left:0;right:0;top:0;height:14px}
+.thint{position:absolute;left:50%;top:5px;transform:translateX(-50%);width:110px;height:4px;border-radius:2px;background:rgba(255,255,255,.35);opacity:0;transition:opacity .3s}
+.topHid .thint{opacity:1}
+.sug{outline:1.5px dashed rgba(126,231,247,.7);outline-offset:-2px}
+.bar{position:absolute;left:0;right:0;top:8px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 6px}
 .bi{display:flex;align-items:center;gap:4px}
 .bt{border:0;background:none;color:#fff;height:30px;min-width:30px;padding:0 8px;border-radius:8px;display:flex;align-items:center;gap:6px;cursor:pointer;font:500 13px Inter,sans-serif;position:relative}
 .bt:hover,.bt.on{background:rgba(255,255,255,.14)}
@@ -69,9 +76,10 @@ p{margin:0}.mut{color:var(--mut)}
   <div class="top">
     <div>
       <h1>Cyl Win v1</h1>
-      <p class="mut">Barra de vidro no topo, dock e Iniciar que aparecem só com o mouse embaixo. Passe o mouse no ícone do PC e na borda de baixo da tela.</p>
+      <p class="mut">As duas barras ficam escondidas e surgem quando o mouse encosta na borda de cima ou de baixo. O que tem contorno tracejado são sugestões minhas.</p>
     </div>
     <div class="ctl" id="ctl">
+      <button data-k="top" aria-pressed="true">Mostrar barra de cima</button>
       <button data-k="dock" aria-pressed="true">Mostrar dock</button>
       <button data-k="pc" aria-pressed="true">Modal do PC</button>
       <button data-k="vol" aria-pressed="false">Volume</button>
@@ -81,36 +89,42 @@ p{margin:0}.mut{color:var(--mut)}
   <div class="stage" id="stage"><div class="screen" id="screen">
     <svg width="1280" height="760" style="position:absolute;inset:0"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06263a"/><stop offset="1" stop-color="#0b4f6c"/></linearGradient></defs><rect width="1280" height="760" fill="url(#g1)"/><circle cx="1010" cy="200" r="90" fill="#7ee7f7" opacity=".9"/><circle cx="1010" cy="200" r="150" fill="#7ee7f7" opacity=".1"/><path d="M0 560 C220 470 380 520 560 470 S920 420 1280 500 V760 H0z" fill="#0e6a86"/><path d="M0 620 C260 560 470 620 700 570 S1040 540 1280 600 V760 H0z" fill="#0b8aa6" opacity=".85"/><path d="M0 680 C300 640 600 700 900 660 S1180 650 1280 670 V760 H0z" fill="#0a3446"/></svg>
     <div id="wins"></div>
+    <div class="thint"></div><div class="topedge" id="topedge"></div>
+    <div class="topw" id="topw">
     <div class="bar glass">
       <div class="bi">
         <button class="bt" id="pcBtn" aria-label="Informações do PC"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>Cyl</button>
-        <span style="opacity:.6;margin-left:6px">Código · Cyl-Win</span>
+        <span class="bt sug" title="IA local"><svg width="16" height="16" viewBox="0 0 24 24" fill="#7ee7f7"><path d="M12 2l2.2 6.3L20 10l-5.8 1.7L12 18l-2.2-6.3L4 10l5.8-1.7z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>IA</span>
+        <span class="bt sug" title="Tocando agora" style="gap:8px"><span class="ti" style="background:#1db954">♪</span><span style="opacity:.9">Lo-fi Beats</span><span style="opacity:.75;letter-spacing:2px">⏮ ⏸ ⏭</span></span>
       </div>
       <div class="bi">
+        <span class="bt sug" title="Clima">☁ 24°</span>
         <span class="bt" title="Discord"><span class="ti" style="background:#5865f2">D</span></span>
         <span class="bt" title="Steam"><span class="ti" style="background:#1b2838;border:1px solid #66c0f4">S</span></span>
-        <span class="bt" title="Spotify"><span class="ti" style="background:#1db954">♪</span></span>
-        <span style="width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 4px"></span>
+        <span style="width:1px;height:20px;background:rgba(255,255,255,.2);margin:0 2px"></span>
         <span class="bt" title="Wi-Fi"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/></svg></span>
         <button class="bt" id="volBtn" aria-label="Volume"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.8 6a8.5 8.5 0 0 1 0 12"/></svg></button>
+        <span class="bt sug" title="Microfone ligado"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span>
         <button class="bt" id="ntBtn" aria-label="Notificações"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg><span class="badge"></span></button>
-        <span class="bt" style="font-weight:600">qua 25 nov&nbsp;&nbsp;23:36</span>
+        <span class="bt" style="font-weight:600">23:43</span>
       </div>
     </div>
-    <div class="pop glass" id="pcPop" style="left:16px;width:300px">
+    <div class="pop glass" id="pcPop" style="left:0;width:300px">
       <h3 style="color:#fff;font-size:14px;margin:0">Meu PC</h3>
       <div id="rows"></div>
+      <div class="sug" style="padding:6px 8px;border-radius:8px;margin:0 -8px 8px;font-variant-numeric:tabular-nums">Rede ↓ <b id="dn">12,4</b> MB/s · ↑ <b id="up">0,8</b> MB/s</div>
       <div style="opacity:.6;font-size:12px">Ligado há 3 h 12 min · Disco C: 212 GB livres</div>
     </div>
-    <div class="pop glass" id="volPop" style="right:150px;width:310px" hidden>
+    <div class="pop glass" id="volPop" style="right:90px;width:310px" hidden>
       <h3 style="color:#fff;font-size:14px;margin:0 0 4px">Volume por app</h3><div id="apps"></div>
       <div style="display:flex;gap:6px;margin-top:10px" id="outs"></div>
     </div>
-    <div class="pop glass" id="ntPop" style="right:16px;width:300px" hidden>
+    <div class="pop glass" id="ntPop" style="right:0;width:300px" hidden>
       <h3 style="color:#fff;font-size:14px;margin:0">Notificações</h3>
       <div class="nt"><b>Discord</b> · Lucas: bora jogar hoje?<br><small>há 4 min</small></div>
       <div class="nt"><b>Cyl Win</b> · Ponto de restauração criado<br><small>há 1 h</small></div>
       <div class="nt"><b>Windows Update</b> · Atualização pronta para instalar<br><small>há 2 h</small></div>
+    </div>
     </div>
     <div id="bottom">
       <div class="start glass" title="Iniciar"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="#7ee7f7" d="M3 5.5 10.5 4.5v7H3zM11.5 4.3 21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.3z"/></svg></div>
@@ -131,26 +145,27 @@ p{margin:0}.mut{color:var(--mut)}
 <script>
 {
 const $=id=>document.getElementById(id);
-const st={dock:true,pc:true,vol:false,nt:false,out:0,lv:[70,45,30,85]};
+const st={top:true,dock:true,pc:true,vol:false,nt:false,out:0,lv:[70,45,30,85]};
 const apps=[["Spotify","♪","#1db954"],["Discord","D","#5865f2"],["Chrome","C","#e8a33d"],["Jogo","J","#e5484d"]];
 const hw=[["CPU","Ryzen 5 5600GT",()=>r(8,34),v=>v+"%",v=>v],["TEMP","CPU",()=>r(41,58),v=>v+"°C",v=>(v-30)*1.6,"#fbbf24"],["GPU","Radeon Vega 7",()=>r(3,28),v=>v+"%",v=>v],["RAM","16 GB",()=>+(5.6+Math.random()*1.4).toFixed(1),v=>(v+"").replace('.',',')+" de 16 GB",v=>v/16*100]];
 function r(a,b){return Math.round(a+Math.random()*(b-a))}
-function rows(){$('rows').innerHTML=hw.map(([k,n,f,fmt,pct,c])=>{const v=f();return `<div class="row"><span class="k">${k}</span><span class="n">${n}</span><span class="v">${fmt(v)}</span><div class="m" style="--c:${c||'#22d3ee'}"><i style="width:${Math.min(100,pct(v))}%"></i></div></div>`}).join('')}
+function rows(){const d=document.getElementById('dn');if(d){d.textContent=(Math.random()*20).toFixed(1).replace('.',',');document.getElementById('up').textContent=(Math.random()*1.5).toFixed(1).replace('.',',')}$('rows').innerHTML=hw.map(([k,n,f,fmt,pct,c])=>{const v=f();return `<div class="row"><span class="k">${k}</span><span class="n">${n}</span><span class="v">${fmt(v)}</span><div class="m" style="--c:${c||'#22d3ee'}"><i style="width:${Math.min(100,pct(v))}%"></i></div></div>`}).join('')}
 $('apps').innerHTML=apps.map((a,i)=>`<label class="app"><b style="background:${a[2]}">${a[1]}</b>${a[0]}<input type="range" min="0" max="100" value="${st.lv[i]}" data-i="${i}" aria-label="Volume ${a[0]}"><span id="v${i}">${st.lv[i]}</span></label>`).join('');
 function outs(){$('outs').innerHTML=["Fone","Caixa","Headset"].map((o,i)=>`<button data-o="${i}" style="flex:1;padding:7px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:${st.out==i?'#22d3ee':'rgba(255,255,255,.06)'};color:${st.out==i?'#04222e':'#fff'};font:500 12px Inter;cursor:pointer">${o}</button>`).join('')}
 $('dock').innerHTML=[["Ex","#3b82f6",1],["Ch","#e8a33d",1],["Dc","#5865f2",1],["Sp","#1db954",1],["St","#1b2838",0],["Vs","#0ea5e9",1],["Jg","#e5484d",0]].map(([t,c,on])=>`<div class="ico ${on?'on':''}" style="background:${c}">${t}</div>`).join('');
 function win(x,y,w,h,t,c){const n=Math.floor((h-50)/30);return `<div class="win" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px"><div class="tb"><span style="width:9px;height:9px;border-radius:50%;background:${c}"></span>${t}</div>${Array.from({length:n},(_,i)=>`<div class="ln" style="width:${30+((i*37)%60)}%;${i%4==0?'background:'+c+';opacity:.6':''}"></div>`).join('')}</div>`}
 $('wins').innerHTML=win(340,62,520,600,"Código","#22d3ee")+win(876,62,388,292,"Spotify","#1db954")+win(876,370,388,292,"Discord","#5865f2");
-const P=[["Barra de vidro no topo","Rede, som, hora, ícones da bandeja e notificações, sempre visível e translúcida.",'<b>Yasb</b> (barra configurável em YAML, com blur, bandeja e widgets prontos)'],
+const S=[["Sugestão: botão de IA","Abre uma caixinha para perguntar à IA local (Ollama), sem internet. Também por atalho, tipo Alt+Espaço.",'Widget de app do <b>Yasb</b> + <b>Ollama</b> + um script do Cyl Win',1],["Sugestão: tocando agora","Nome da música e controles de tocar, pausar e pular, de qualquer player (Spotify, YouTube no navegador).",'Widget de mídia do <b>Yasb</b>',1],["Sugestão: clima","Temperatura da sua cidade na barra; passando o mouse mostra a previsão.",'Widget de clima do <b>Yasb</b> (API gratuita)',1],["Sugestão: microfone","Mostra se o microfone está ligado e silencia com um clique. Ótimo para Discord.",'Widget de microfone do <b>Yasb</b>',1],["Sugestão: rede no modal do PC","Velocidade de download e upload ao vivo junto com CPU, GPU e RAM.",'Widget de tráfego do <b>Yasb</b>',1]];
+const P=[["Barra de vidro no topo","Centralizada e estreita, com rede, som, hora, bandeja e notificações. Some sozinha e volta quando o mouse encosta em cima.",'<b>Yasb</b> (barra configurável em YAML, com blur, bandeja e widgets prontos)'],
 ["Modal do PC","Passa o mouse no ícone e aparecem CPU, temperatura, GPU e RAM ao vivo.",'Widget de hardware do <b>Yasb</b> + <b>LibreHardwareMonitor</b> rodando em segundo plano para ler a temperatura'],
 ["Dock de vidro embaixo","Ícones centralizados que só aparecem quando o mouse encosta na borda de baixo.",'A própria barra do Windows em <b>ocultar automaticamente</b> + <b>TaskbarX</b> (centraliza os ícones) + <b>TranslucentTB</b> (vidro)'],
 ["Iniciar no canto esquerdo","O botão Iniciar continua no canto inferior esquerdo e aparece junto com o dock.",'No Windows 10 isso já é natural: o TaskbarX centraliza só os ícones e o Iniciar fica na esquerda. Depois dá para trocar o símbolo e o menu com <b>Open-Shell</b>'],
 ["Volume por app","Clica no som da barra de cima e ajusta cada app e a saída.",'<b>EarTrumpet</b> + <b>SoundSwitch</b> para trocar fone e caixa com atalho'],
 ["Notificações","Sininho com marcador na barra de cima, abre a lista.",'Widget de notificações do <b>Yasb</b>, que abre a Central de Ações do Windows']];
-$('pecas').innerHTML=P.map(([h,d,t])=>`<div class="card"><h3>${h}</h3><p class="mut">${d}</p><p class="tool">${t}</p></div>`).join('');
+P.push(...S);$('pecas').innerHTML=P.map(([h,d,t,g])=>`<div class="card"${g?' style="border-style:dashed;border-color:#22d3ee"':''}><h3>${h}</h3><p class="mut">${d}</p><p class="tool">${t}</p></div>`).join('');
 const screen=$('screen'),stage=$('stage');
 function sync(){$('pcPop').hidden=!st.pc;$('volPop').hidden=!st.vol;$('ntPop').hidden=!st.nt;
- $('bottom').classList.toggle('hid',!st.dock);$('hintBar').style.opacity=st.dock?0:1;
+ $('bottom').classList.toggle('hid',!st.dock);screen.classList.toggle('topHid',!st.top);$('hintBar').style.opacity=st.dock?0:1;
  $('pcBtn').classList.toggle('on',st.pc);$('volBtn').classList.toggle('on',st.vol);$('ntBtn').classList.toggle('on',st.nt);
  document.querySelectorAll('#ctl button').forEach(b=>b.setAttribute('aria-pressed',st[b.dataset.k]));outs()}
 function set(k,v){st[k]=v;if(v&&k=='vol')st.nt=false;if(v&&k=='nt')st.vol=false;sync()}
@@ -160,6 +175,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('#ctl button');if
 document.addEventListener('input',e=>{const i=e.target.dataset.i;if(i!=null){st.lv[i]=+e.target.value;$('v'+i).textContent=e.target.value}});
 $('pcBtn').addEventListener('mouseenter',()=>set('pc',true));
 $('pcPop').addEventListener('mouseleave',()=>set('pc',false));
+$('topedge').addEventListener('mouseenter',()=>set('top',true));
+$('topw').addEventListener('mouseleave',()=>{st.vol=st.nt=st.pc=false;set('top',false)});
 $('bottom').addEventListener('mouseenter',()=>set('dock',true));
 $('bottom').addEventListener('mouseleave',()=>set('dock',false));
 const fit=()=>{const s=stage.clientWidth/1280;screen.style.transform=`scale(${s})`;stage.style.height=760*s+'px'};
