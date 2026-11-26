@@ -1,0 +1,152 @@
+<title>Conceitos do Cyl Win</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* VOICE everyday, pessoal e empolgado, mas com acabamento de produto
+   IDEA um "showroom" de desktops: a tela do PC é a peça, troca-se o conceito como quem troca de tema
+   PICTURE a área de trabalho inteira simulada, com barra, bandeja, volume por app clicável e janelas em zonas
+   COLOUR fundo grafite claro/escuro, tinta quase preta; cada conceito traz sua cor (ciano, verde-musgo, laranja)
+   TYPE Inter Tight 700 + Inter, JetBrains Mono só dentro da barra estilo rice
+   LAYOUT título curto e abas no topo, tela grande logo abaixo; depois ficha do conceito em 3 colunas; no celular tudo empilha */
+:root{color-scheme:light dark;--bg:light-dark(#eef0f2,#111316);--ink:light-dark(#14171a,#eceff2);--mut:light-dark(#5b636b,#9aa3ab);--card:light-dark(#fff,#1a1d21);--line:light-dark(#d9dde1,#2a2e33);--ac:#14b8d4}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Inter,system-ui,sans-serif;margin:0;overflow-x:clip}
+.band{padding-block:clamp(24px,3.5vw,48px);padding-left:max(5vw,16px,env(safe-area-inset-left,0px));padding-right:max(5vw,16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1240px;margin:0 auto}
+h1{font:700 clamp(32px,4.4vw,48px)/1.05 "Inter Tight",sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+h2{font:700 26px/1.1 "Inter Tight",sans-serif;letter-spacing:-.02em;margin:0 0 10px}
+h3{font:600 17px/1.2 "Inter Tight",sans-serif;margin:0 0 8px}
+.lede{color:var(--mut);margin:0;max-width:64ch}
+.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px 32px;margin-bottom:20px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{font:600 15px Inter,sans-serif;padding:10px 16px;min-height:44px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.tabs button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs button:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.stage{position:relative;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}
+.screen{position:absolute;left:0;top:0;width:1280px;height:760px;transform-origin:0 0;overflow:hidden;font:13px/1.4 Inter,sans-serif;color:#fff}
+.hint{font-size:14px;color:var(--mut);margin:10px 0 0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.card ul{margin:0;padding-left:18px}.card li{margin:4px 0}
+.tag{display:inline-block;font-size:13px;padding:2px 8px;border-radius:6px;background:color-mix(in srgb,var(--ac) 18%,transparent);margin:2px 4px 2px 0}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600}
+td:first-child{font-weight:600;white-space:nowrap}
+@media(max-width:800px){.grid3{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){table{font-size:13px}th,td{padding:6px 4px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;white-space:normal}.stack td::before{content:attr(data-l);color:var(--mut);font-weight:500}}
+/* peças da tela */
+.wall{position:absolute;inset:0}
+.win{position:absolute;border-radius:10px;overflow:hidden;background:rgba(20,24,30,.92);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.win .tb{height:30px;display:flex;align-items:center;gap:8px;padding:0 12px;font-weight:600;font-size:12px;background:rgba(255,255,255,.06)}
+.win .ln{height:8px;border-radius:4px;background:rgba(255,255,255,.14);margin:10px 14px}
+.zone{position:absolute;border:2px dashed rgba(255,255,255,.35);border-radius:10px}
+.ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:700;font-size:13px;color:#fff;position:relative}
+.ico.on::after{content:"";position:absolute;bottom:-7px;width:14px;height:3px;border-radius:2px;background:currentColor;opacity:.9}
+.tray{display:flex;align-items:center;gap:12px}
+.vol{cursor:pointer;border:0;background:none;color:inherit;padding:6px;border-radius:6px;display:grid;place-items:center}
+.vol:hover{background:rgba(255,255,255,.12)}
+.fly{position:absolute;width:330px;padding:16px;border-radius:14px;color:#fff;box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.fly h4{margin:0 0 10px;font:600 13px Inter,sans-serif;opacity:.75}
+.app{display:grid;grid-template-columns:26px 74px 1fr 34px;align-items:center;gap:10px;margin:10px 0}
+.app b{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:11px}
+.app input{width:100%;accent-color:var(--c)}
+.app span{text-align:right;font-variant-numeric:tabular-nums;opacity:.8}
+.outs{display:flex;gap:8px;margin-top:12px}
+.outs button{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font:500 12px Inter,sans-serif;cursor:pointer}
+.outs button.sel{background:var(--c);border-color:var(--c);color:#000}
+.wid{position:absolute;color:#fff}
+.meter{height:6px;border-radius:3px;background:rgba(255,255,255,.18);overflow:hidden;margin:4px 0 10px}
+.meter i{display:block;height:100%;background:var(--c)}
+</style>
+
+<div class="band"><div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Conceitos do Cyl Win</h1>
+      <p class="lede">Três caminhos para a área de trabalho, a barra, a bandeja e o volume. Clique no ícone de som da bandeja para abrir o volume por app.</p>
+    </div>
+    <div class="tabs" role="group" aria-label="Conceito" id="tabs"></div>
+  </div>
+  <div class="stage" id="stage"><div class="screen" id="screen"></div></div>
+  <p class="hint" id="hint"></p>
+</div></div>
+
+<div class="band" style="padding-top:0"><div class="wrap">
+  <div class="grid3" id="ficha"></div>
+</div></div>
+
+<div class="band" style="padding-top:0"><div class="wrap">
+  <h2>Lado a lado</h2>
+  <p class="lede" style="margin-bottom:14px">Dá para misturar: por exemplo a barra do Rice com o volume do Vidro.</p>
+  <div class="scroll"><table class="stack"><thead><tr><th>Peça</th><th>Vidro</th><th>Rice</th><th>Mínimo</th></tr></thead><tbody id="cmp"></tbody></table></div>
+</div></div>
+
+<script>
+{
+const vol=`<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.8 6a8.5 8.5 0 0 1 0 12"/></svg>`;
+const wifi=`<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a15 15 0 0 1 20 0M5.5 12.5a10 10 0 0 1 13 0M9 16a5 5 0 0 1 6 0"/><circle cx="12" cy="19.5" r="1.2" fill="currentColor"/></svg>`;
+const apps=[["Spotify","Sp","#1db954",70],["Discord","Dc","#5865f2",45],["Chrome","Ch","#e8a33d",30],["Jogo","Jg","#e5484d",85]];
+const st={c:0,open:true,out:0,lv:apps.map(a=>a[3])};
+const C=[
+ {id:"vidro",nome:"Vidro",c:"#22d3ee",
+  hint:"Vidro: barra flutuante centralizada e translúcida, widgets à esquerda, janelas encaixadas em zonas.",
+  wall:`<svg width="1280" height="760" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06263a"/><stop offset="1" stop-color="#0b4f6c"/></linearGradient></defs><rect width="1280" height="760" fill="url(#g1)"/><circle cx="1010" cy="170" r="90" fill="#7ee7f7" opacity=".9"/><circle cx="1010" cy="170" r="140" fill="#7ee7f7" opacity=".12"/><path d="M0 560 C220 470 380 520 560 470 S920 420 1280 500 V760 H0z" fill="#0e6a86"/><path d="M0 620 C260 560 470 620 700 570 S1040 540 1280 600 V760 H0z" fill="#0b8aa6" opacity=".85"/><path d="M0 680 C300 640 600 700 900 660 S1180 650 1280 670 V760 H0z" fill="#0a3446"/></svg>`,
+  bar:s=>`<div style="position:absolute;left:50%;bottom:14px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;padding:9px 16px;border-radius:18px;background:rgba(10,30,44,.55);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.16)">
+   <div class="ico" style="background:#22d3ee;color:#04222e">C</div>
+   ${icons(["#5865f2","#1db954","#e8a33d","#3b82f6","#e5484d"],[1,1,1,0,1])}
+   <div style="width:1px;height:26px;background:rgba(255,255,255,.2)"></div>
+   <div class="tray">${wifi}<button class="vol" data-v aria-label="Volume">${vol}</button><span style="font-weight:600">22:47</span></div></div>`,
+  wid:`<div class="wid" style="left:44px;top:40px;--c:#22d3ee"><div style="font:700 92px/1 'Inter Tight';letter-spacing:-.03em">22:47</div><div style="font-size:18px;opacity:.85;margin:6px 0 26px">quarta, 25 de novembro</div>
+   <div style="width:230px;padding:14px 16px;border-radius:14px;background:rgba(10,30,44,.5);border:1px solid rgba(255,255,255,.14)">CPU 18%<div class="meter"><i style="width:18%"></i></div>RAM 6,1 de 16 GB<div class="meter"><i style="width:38%"></i></div>São Paulo 24°, nublado</div></div>`,
+  wins:`<div class="zone" style="left:330px;top:40px;width:430px;height:600px"></div>
+   ${win(778,40,458,292,"Código")}${win(778,348,458,292,"Spotify","#1db954")}`,
+  fly:{bg:"rgba(10,30,44,.82)",pos:"right:40px;bottom:86px;backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.16)"}},
+ {id:"rice",nome:"Rice",c:"#a3e635",
+  hint:"Rice: barra no topo estilo Linux com áreas de trabalho numeradas, janelas em tiling com espaço entre elas, sem barra embaixo.",
+  wall:`<svg width="1280" height="760" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMax slice"><rect width="1280" height="760" fill="#141a14"/>${Array.from({length:40},(_,i)=>{const x=(i*97)%1280,h=180+(i*53)%260;return `<path d="M${x} 760 L${x+34} ${760-h} L${x+68} 760z" fill="${i%2?'#1f2a1c':'#263522'}"/>`}).join('')}<circle cx="200" cy="140" r="40" fill="#d9f99d" opacity=".55"/></svg>`,
+  bar:s=>`<div style="position:absolute;left:10px;right:10px;top:8px;height:34px;border-radius:9px;background:#0d110c;border:1px solid #2c3a28;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font:500 12px 'JetBrains Mono',monospace;color:#d9f99d">
+   <div style="display:flex;gap:6px">${[1,2,3,4,5].map(n=>`<span style="width:24px;height:22px;border-radius:5px;display:grid;place-items:center;${n==2?'background:#a3e635;color:#0d110c':'color:#7c8f6f'}">${n}</span>`).join('')}<span style="margin-left:10px;color:#7c8f6f">código · nvim</span></div>
+   <div>qua 25 nov  22:47</div>
+   <div class="tray" style="color:#d9f99d"><span>cpu 18%</span><span>ram 6.1G</span>${wifi}<button class="vol" data-v aria-label="Volume">${vol}</button></div></div>`,
+  wid:"",
+  wins:`${win(10,52,700,698,"nvim  ~/Cyl-Win","#a3e635","#0d110c")}${win(720,52,550,344,"terminal","#a3e635","#0d110c")}${win(720,406,550,344,"Spotify","#1db954","#0d110c")}`,
+  fly:{bg:"#0d110c",pos:"right:20px;top:50px;border:1px solid #2c3a28;font-family:'JetBrains Mono',monospace"}},
+ {id:"minimo",nome:"Mínimo",c:"#fb923c",
+  hint:"Mínimo: área de trabalho limpa, barra escondida que aparece ao encostar o mouse, só uma pílula com relógio e bandeja.",
+  wall:`<svg width="1280" height="760" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMax slice"><rect width="1280" height="760" fill="#f4ede4"/><circle cx="880" cy="330" r="210" fill="#fb923c"/><circle cx="880" cy="330" r="210" fill="none" stroke="#f4ede4" stroke-width="2" stroke-dasharray="2 10"/><rect y="520" width="1280" height="240" fill="#e7dccd"/><rect y="520" width="1280" height="3" fill="#d8c9b5"/></svg>`,
+  bar:s=>`<div style="position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;padding:6px 8px 6px 16px;border-radius:999px;background:#1c1917;color:#f4ede4">
+   <span style="font-weight:600">22:47</span><div class="tray">${wifi}<button class="vol" data-v aria-label="Volume">${vol}</button></div>
+   <div class="ico" style="width:28px;height:28px;border-radius:999px;background:#fb923c;color:#1c1917">C</div></div>
+   <div style="position:absolute;left:50%;bottom:4px;transform:translateX(-50%);width:120px;height:4px;border-radius:2px;background:#1c1917;opacity:.25"></div>`,
+  wid:`<div class="wid" style="left:80px;top:150px;color:#1c1917"><div style="font:700 120px/1 'Inter Tight';letter-spacing:-.04em">22:47</div><div style="font-size:20px;margin-top:10px;opacity:.7">quarta, 25 de novembro · 24° em São Paulo</div></div>`,
+  wins:"",
+  fly:{bg:"#1c1917",pos:"left:50%;margin-left:-60px;bottom:70px"}}
+];
+function icons(cs,on){return cs.map((c,i)=>`<div class="ico ${on[i]?'on':''}" style="background:${c};color:${c}"><span style="color:#fff">${["Dc","Sp","Ch","Ex","Jg"][i]}</span></div>`).join('')}
+function win(x,y,w,h,t,c="#22d3ee",bg){const n=Math.max(3,Math.floor((h-50)/30));return `<div class="win" style="left:${x}px;top:${y}px;width:${w}px;height:${h}px;${bg?'background:'+bg+';border:1px solid #2c3a28':''}"><div class="tb"><span style="width:9px;height:9px;border-radius:50%;background:${c}"></span>${t}</div>${Array.from({length:n},(_,i)=>`<div class="ln" style="width:${30+((i*37)%60)}%;${i%4==0?'background:'+c+';opacity:.6':''}"></div>`).join('')}</div>`}
+function flyout(k){const f=k.fly;return `<div class="fly" style="background:${f.bg};${f.pos};--c:${k.c}"><h4>Volume por app</h4>${apps.map((a,i)=>`<label class="app"><b style="background:${a[2]}">${a[1]}</b>${a[0]}<input type="range" min="0" max="100" value="${st.lv[i]}" data-i="${i}" aria-label="Volume ${a[0]}"><span id="v${i}">${st.lv[i]}</span></label>`).join('')}<h4 style="margin-top:14px">Saída</h4><div class="outs">${["Fone","Caixa","Headset"].map((o,i)=>`<button data-o="${i}" class="${st.out==i?'sel':''}">${o}</button>`).join('')}</div></div>`}
+const scr=document.getElementById('screen'),stage=document.getElementById('stage');
+function render(){const k=C[st.c];document.documentElement.style.setProperty('--ac',k.c);
+ scr.innerHTML=`<div class="wall">${k.wall}</div>${k.wid}${k.wins}${k.bar()}${st.open?flyout(k):''}`;
+ document.getElementById('hint').textContent=k.hint;
+ document.getElementById('tabs').innerHTML=C.map((c,i)=>`<button aria-pressed="${i==st.c}" data-t="${i}">${c.nome}</button>`).join('');
+ document.getElementById('ficha').innerHTML=F[st.c].map(([h,items])=>`<div class="card"><h3>${h}</h3><ul>${items.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');}
+const F=[
+ [["A sensação",["Moderno e “premium”, parecido com macOS mas com cara própria","Bom para quem usa mouse e gosta de ver o papel de parede"]],["Como se faz",["Barra centralizada e translúcida: <b>Windhawk</b> (mods de taskbar) + <b>TranslucentTB</b>","Widgets: <b>Rainmeter</b>","Zonas de janela: <b>PowerToys FancyZones</b>","Volume por app: <b>EarTrumpet</b> + <b>SoundSwitch</b>"]],["Custo no PC",["Leve. O blur da barra usa um pouco de GPU","Risco baixo, tudo reversível"]]],
+ [["A sensação",["Estilo Linux “rice”: tudo no teclado, janelas se organizam sozinhas","Ótimo para programar e para quem gosta de terminal"]],["Como se faz",["Barra no topo: <b>Yasb</b> ou <b>Zebar</b>","Tiling: <b>komorebi</b> ou <b>GlazeWM</b>","Barra do Windows escondida pelo <b>Windhawk</b>","Atalhos: <b>AutoHotkey v2</b>"]],["Custo no PC",["Muito leve","Curva de aprendizado maior, alguns apps não gostam de tiling"]]],
+ [["A sensação",["Calmo e limpo, nada na tela até você precisar","Relógio grande e um papel de parede marcante"]],["Como se faz",["Barra oculta automática + mods de pílula no <b>Windhawk</b>","Relógio: <b>Rainmeter</b> ou papel de parede do <b>Lively</b>","Abrir apps: <b>PowerToys Run</b> (Alt+Espaço)","Volume: flyout do <b>EarTrumpet</b>"]],["Custo no PC",["O mais leve dos três","Depende de atalhos para achar as coisas"]]]
+];
+document.getElementById('cmp').innerHTML=[["Barra de tarefas","Flutuante, centro, vidro","Topo, estilo Linux","Escondida, só uma pílula"],["Bandeja","Wi-Fi, som, relógio","Texto: CPU, RAM, rede","Mínima, só o essencial"],["Volume","Por app + troca de saída","Mesmo painel, tema escuro","Mesmo painel, ao lado da pílula"],["Janelas","Zonas (FancyZones)","Tiling automático","Livres, maximizadas"],["Widgets","Relógio, CPU, RAM, clima","Dentro da barra","Só relógio grande"],["Leveza","Boa","Ótima","Ótima"]].map(r=>`<tr>${r.map((c,i)=>`<td data-l="${['','Vidro','Rice','Mínimo'][i]}">${c}</td>`).join('')}</tr>`).join('');
+document.addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(t){st.c=+t.dataset.t;st.open=true;render();return}
+ if(e.target.closest('[data-v]')){st.open=!st.open;render();return}
+ const o=e.target.closest('[data-o]');if(o){st.out=+o.dataset.o;render()}});
+document.addEventListener('input',e=>{const i=e.target.dataset.i;if(i!=null){st.lv[i]=+e.target.value;document.getElementById('v'+i).textContent=e.target.value}});
+const fit=()=>{const s=stage.clientWidth/1280;scr.style.transform=`scale(${s})`;stage.style.height=760*s+'px'};
+const ro=new ResizeObserver(fit);ro.observe(stage);
+render();fit();
+}
+</script>
